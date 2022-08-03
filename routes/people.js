@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {addPerson, getPeople} = require('../controllers/poeple');
+const {addPerson, getPeople, updatePerson, readPerson, deletePerson} = require('../controllers/poeple');
 
 router.get('/', async (req, res) => {
     try {
@@ -24,6 +24,42 @@ router.post('/', async (req, res) => {
     }
 
     res.status(201).json({success:true, msg: "person added."})
+});
+
+router.put('/:id', async (req, res) => {
+    const {name} = req.body;
+    if (!name) return res.status(400).json({success:false, msg:'Name cannot be emoty!'});
+
+    const {id} = req.params;
+    try {
+        let updatedPerson = await updatePerson(Number(id), name);
+        res.status(200).json({success: true, data: updatedPerson});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({success:false, msg:'Something went wrong!'})
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    const {id} = req.params;
+    try {
+        let updatedPerson = await readPerson(Number(id));
+        res.status(200).json({success: true, data: updatedPerson});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({success:false, msg:'Something went wrong!'})
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+    const {id} = req.params;
+    try {
+        let updatedPerson = await deletePerson(Number(id));
+        res.status(200).json({success: true, data: updatedPerson});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({success:false, msg:'Something went wrong!'})
+    }
 });
 
 module.exports = router;
